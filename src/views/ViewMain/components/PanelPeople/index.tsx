@@ -30,8 +30,8 @@ import { PersonCard } from '@components/PersonCard'
 
 export const PanelPeople: FC<iPeoplePanelProps> = ({
   fetchedUser,
-  personsToSet,
-  curPersonToSet,
+  persons,
+  curPerson,
   setPeopleSort,
   peopleSort,
   setPeopleFilter,
@@ -45,67 +45,36 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
   goHome,
   ...rest
 }) => {
-  const [persons, setPersons] = useState<iPerson[]>([])
-  const [curPerson, setCurPerson] = useState<iPerson>()
+  
   const [shownPersons, setShownPersons] = useState<iPerson[]>([])
-
   const [scrolledPersons, setScrolledPersons] = useState<iPerson[]>([])
   const [hasPersonsToScroll, setHasPersonsToScroll] = useState<boolean>(true)
   const [scrollChunkNum, setScrollChunkNum] = useState<number>(1)
 
   useEffect(() => {
     console.log(new Date().toTimeString(), 'fetchData hook called')
-    let localPersons = personsToSet
-    console.log({ localPersons }, { persons })
-    setCurPerson(curPersonToSet)
-    setPersons(localPersons)
+    console.log({ persons })
 
+    let localShownPersons = persons
     if (peopleSort) {
-      localPersons = sortPersons({ persons: localPersons, ...peopleSort })
+      localShownPersons = sortPersons({ persons: localShownPersons, ...peopleSort })
     }
     if (peopleFilter) {
-      localPersons = filterPersons({ persons: localPersons, ...peopleFilter })
+      localShownPersons = filterPersons({ persons: localShownPersons, ...peopleFilter })
+    }
+    if (peopleSearch !== '') {
+      localShownPersons = searchPersons({ persons: localShownPersons, value: peopleSearch })
     }
 
-    resetShownPersons(localPersons, curPersonToSet)
+    resetShownPersons(localShownPersons)
     console.log(new Date().toTimeString(), 'fetchData hook ended')
-  }, [])
+  }, [peopleSort, peopleFilter, peopleSearch])
 
-  useEffect(() => {
-    window.onpopstate = () => {
-      console.log('window.onpopstate hook called')
-      setActivePanel(ePanelIds.Home)
-    }
-  })
-
-  useDidMountEffect(() => {
-    console.log(new Date().toTimeString(), 'peopleSort hook called')
-    setPeopleSearch('')
-    const localPersons = peopleSort ? sortPersons({ persons, ...peopleSort }) : persons
-    resetShownPersons(localPersons)
-    console.log(new Date().toTimeString(), 'peopleSort hook ended')
-  }, [peopleSort])
-
-  useDidMountEffect(() => {
-    console.log(new Date().toTimeString(), 'peopleFilter hook called')
-    setPeopleSearch('')
-    const localPersons = peopleFilter ? filterPersons({ persons, ...peopleFilter }) : persons
-    resetShownPersons(localPersons)
-    console.log(new Date().toTimeString(), 'peopleFilter hook ended')
-  }, [peopleFilter])
-
-  useDidMountEffect(() => {
-    console.log(new Date().toTimeString(), 'peopleSearch hook called')
-    // setPeopleFilter(null)
-    const localPersons = peopleSearch !== '' ? searchPersons({ persons, value: peopleSearch }) : persons
-    resetShownPersons(localPersons)
-    console.log(new Date().toTimeString(), 'peopleSearch hook ended')
-  }, [peopleSearch])
-
-  const resetShownPersons = (localPersons = persons, localCurPerson = curPerson): void => {
-    localPersons = shiftCurPerson({ persons: localPersons, curPerson: localCurPerson })
-    setShownPersons(localPersons)
-    resetScrolledPersons(localPersons)
+  
+  const resetShownPersons = (localShownPersons = persons): void => {
+    localShownPersons = shiftCurPerson({ persons: localShownPersons, curPerson: curPerson })
+    setShownPersons(localShownPersons)
+    resetScrolledPersons(localShownPersons)
   }
 
   const fetchDataToScroll = (

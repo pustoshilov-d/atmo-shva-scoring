@@ -14,8 +14,8 @@ export interface iCustomPanelProps extends PanelProps {
 }
 
 export interface iPeoplePanelProps extends iCustomPanelProps {
-  personsToSet: iPerson[]
-  curPersonToSet: iPerson | undefined
+  persons: iPerson[]
+  curPerson: iPerson | undefined
   peopleSort: iSort | null
   setPeopleSort: (v: iSort | null) => void
   peopleFilter: iFilter | null
@@ -38,5 +38,6 @@ export interface iPanelMapProps extends iCustomPanelProps {
   maps: iMap[]
   persons: iPerson[]
   setPeopleSearch: (peopleSearch: string) => void
+  setPeopleFilter: (v: iFilter | null) => void
   setIsPeopleCardsCollapsed: (isPeopleCardsCollapsed: boolean) => void
 }

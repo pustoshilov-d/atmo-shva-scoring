@@ -54,8 +54,8 @@ export const ViewMain: FC<iMainViewProps> = ({
         setActivePanel={setActivePanel}
         setActiveModal={setActiveModal}
         fetchedUser={fetchedUser}
-        curPersonToSet={curPerson}
-        personsToSet={persons}
+        curPerson={curPerson}
+        persons={persons}
         peopleSort={peopleSort}
         setPeopleSort={setPeopleSort}
         peopleFilter={peopleFilter}
@@ -74,6 +74,7 @@ export const ViewMain: FC<iMainViewProps> = ({
         persons={persons}
         setActiveModal={setActiveModal}
         setPeopleSearch={setPeopleSearch}
+        setPeopleFilter={setPeopleFilter}
         setIsPeopleCardsCollapsed={setIsPeopleCardsCollapsed}
       />
       <PanelMatch

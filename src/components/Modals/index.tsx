@@ -63,49 +63,60 @@ export const ModalPeopleFilters: FC<iModalPeopleFiltersProps> = ({
       }
       {...rest}
     >
-      {/* <>Сбросить фильтры</> */}
       <Group>
         <Header>Сортировать по</Header>
         <FormItem className={'modal-people-filters__sort-radios'}>
           <Radio
+          key="name"
             checked={peopleSort != null && peopleSort === ePeopleSort.NAME}
             description="От А до Я"
             onClick={() => onSortClick(ePeopleSort.NAME)}
+            readOnly
           >
             Имя вожатого
           </Radio>
           <Radio
+          key="surname"
             checked={peopleSort != null && peopleSort === ePeopleSort.SURNAME}
             description="От А до Я"
             onClick={() => onSortClick(ePeopleSort.SURNAME)}
+            readOnly
           >
             Фамилия вожатого
           </Radio>
           <Radio
+          key="shvaYearS"
             checked={peopleSort != null && peopleSort === ePeopleSort.SHVA_YEAR_S}
             description="От прошлых к новым"
             onClick={() => onSortClick(ePeopleSort.SHVA_YEAR_S)}
+            readOnly
           >
             Год выпуска ШВА
           </Radio>
           <Radio
+          key="shvaYearSDesc"
             checked={peopleSort != null && peopleSort === ePeopleSort.SHVA_YEAR_S_DESC}
             description="От новых к прошлым"
             onClick={() => onSortClick(ePeopleSort.SHVA_YEAR_S_DESC)}
+            readOnly
           >
             Год выпуска ШВА
           </Radio>
           <Radio
+          key="allYearsSmenyDesc"
             checked={peopleSort != null && peopleSort === ePeopleSort.ALL_YEARS_SMENY_DESC}
             description="От большего к меньшему"
             onClick={() => onSortClick(ePeopleSort.ALL_YEARS_SMENY_DESC)}
+            readOnly
           >
             Количество отработанных смен
           </Radio>
           <Radio
+          key="achievementsCountDesc"
             checked={peopleSort != null && peopleSort === ePeopleSort.ACHIEVEMENTS_COUNT_DESC}
             description="От большего к меньшему"
             onClick={() => onSortClick(ePeopleSort.ACHIEVEMENTS_COUNT_DESC)}
+            readOnly
           >
             Количество достижений
           </Radio>
@@ -117,6 +128,8 @@ export const ModalPeopleFilters: FC<iModalPeopleFiltersProps> = ({
           <Radio
             checked={peopleFilter != null && peopleFilter === ePeopleFilter.SEX_M}
             name="sex"
+            key="sexM"
+            readOnly
             description={
               'Вожатых найдено: ' +
                 stats
@@ -129,8 +142,10 @@ export const ModalPeopleFilters: FC<iModalPeopleFiltersProps> = ({
             Парни
           </Radio>
           <Radio
+            key="sexF"
             checked={peopleFilter != null && peopleFilter === ePeopleFilter.SEX_F}
             name="sex"
+            readOnly
             description={
               'Вожатых найдено: ' +
                 stats
@@ -145,8 +160,10 @@ export const ModalPeopleFilters: FC<iModalPeopleFiltersProps> = ({
         </FormItem>
         <FormItem top="Статус в отряде">
           <Radio
+            key="isPoActiveTrue"
             checked={peopleFilter != null && peopleFilter === ePeopleFilter.IS_PO_ACTIVE_TRUE}
             name="is_po_active"
+            readOnly
             description={
               'Вожатых найдено: ' +
                 stats
@@ -159,8 +176,10 @@ export const ModalPeopleFilters: FC<iModalPeopleFiltersProps> = ({
             Активный
           </Radio>
           <Radio
+            key="isPoActiveFalse"
             checked={peopleFilter != null && peopleFilter === ePeopleFilter.IS_PO_ACTIVE_FALSE}
             name="is_po_active"
+            readOnly
             description={
               'Вожатых найдено: ' +
                 stats
@@ -178,6 +197,7 @@ export const ModalPeopleFilters: FC<iModalPeopleFiltersProps> = ({
           getPeopleFilters({ stats }).map((filter) => (
             <SimpleCell
               key={filter.y_en_label}
+              readOnly
               before={<Icon12CircleOutline className="modal-people-filters__filter-custom-before" />}
               after={<Icon24Chevron className="modal-people-filters__filter-custom-after" />}
               onClick={() => changeActiveModal(filter.y_en_label)}

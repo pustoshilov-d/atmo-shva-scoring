@@ -126,7 +126,10 @@ export const PersonCard: FC<iPersonCardProps> = ({ person, isCardsCollapsed, isC
             target="_blank"
             rel="noopener"
           >
-            <Icon28PhoneCircleFillGreen className="person-card__content-buttons-vkicons" width={24} height={24} />
+            <Icon28PhoneCircleFillGreen
+              className="person-card__content-buttons-vkicons"
+              style={{ width: '20', height: '20', padding: '2', margin: '12' }}
+            />
           </IconButton>
         ) : (
           <IconButton
@@ -139,7 +142,10 @@ export const PersonCard: FC<iPersonCardProps> = ({ person, isCardsCollapsed, isC
             target="_blank"
             rel="noopener"
           >
-            <Icon28EditCircleFillBlue className="person-card__content-buttons-vkicons" width={24} height={24} />
+            <Icon28EditCircleFillBlue
+              className="person-card__content-buttons-vkicons"
+              style={{ width: '20', height: '20', padding: '2', margin: '12' }}
+            />
           </IconButton>
         )}
         <IconButton
@@ -147,17 +153,18 @@ export const PersonCard: FC<iPersonCardProps> = ({ person, isCardsCollapsed, isC
           href={`https://vk.com/id${person.vk_id}`}
           target="_blank"
           rel="noopener"
+          style={{ width: '24', height: '24', margin: '12' }} 
         >
           <Icon24LogoVkColor />
         </IconButton>
         {person.inst_link && (
           <IconButton onClick={(e) => handleClick(e)} href={person.inst_link} target="_blank" rel="noopener">
-            <IconInstagram style={{ width: '24', height: '24', padding: '12' }} />
+            <IconInstagram style={{ width: '24', height: '24', margin: '12' }} />
           </IconButton>
         )}
         {person.tg_link && (
           <IconButton onClick={(e) => handleClick(e)} href={person.tg_link} target="_blank" rel="noopener">
-            <IconTelegram style={{ width: '24', height: '24', padding: '12' }} />
+            <IconTelegram style={{ width: '24', height: '24', margin: '12' }} />
           </IconButton>
         )}
       </div>

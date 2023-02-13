@@ -15,5 +15,6 @@ declare module '*.svg' {
   export default src
 }
 
+declare module 'yandex-map-react'
 declare module '*.gif'
 declare module '*.jpg'
