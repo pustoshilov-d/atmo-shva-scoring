@@ -52,7 +52,7 @@
   margin-top: 4px;
 }
 
-.person-card__header-subheader-shva {
+.person-card__header-subheader-scoring {
   color: var(--vkui--color_text_subhead);
   font-family: var(--vkui--font_title3--font_family--regular);
   font-size: var(--vkui--font_title3--font_size--regular);

@@ -1,10 +1,5 @@
-import { eModalIds, ePanelIds } from '@shared/enums'
-import useDidMountEffect from '@shared/hooks/useDidMountEffect'
-
 import { ReactComponent as IconCollapse } from '@assets/img/collapse.svg'
 import { ReactComponent as IconExpand } from '@assets/img/expand.svg'
-import { ReactComponent as IconFilter } from '@assets/img/filter.svg'
-import { ReactComponent as IconUnfilter } from '@assets/img/filter_x.svg'
 import {
   FixedLayout,
   Footer,
@@ -20,32 +15,27 @@ import {
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import '../../index.css'
-import { CHUNK_SIZE } from './consts'
-import { filterPersons, searchPersons, shiftCurPerson, sortPersons } from './helpers'
-import './index.css'
-import { iPerson } from '@src/shared/types'
-import { iPeoplePanelProps } from '../types'
 import { PersonCard } from '@components/PersonCard'
+import { iPerson, iSort } from '@src/shared/types'
+import {ePeopleSort} from '@src/shared/enums'
+import '../../index.css'
+import { iPeoplePanelProps } from '../types'
+import { CHUNK_SIZE } from './consts'
+import { searchPersons, shiftCurPerson, sortPersons } from './helpers'
+import './index.css'
 
 export const PanelPeople: FC<iPeoplePanelProps> = ({
   fetchedUser,
   persons,
   curPerson,
-  setPeopleSort,
-  peopleSort,
-  setPeopleFilter,
-  peopleFilter,
   setActivePanel,
-  setActiveModal,
-  peopleSearch,
-  setPeopleSearch,
-  isPeopleCardsCollapsed,
-  setIsPeopleCardsCollapsed,
   goHome,
+  scoringMeta,
   ...rest
 }) => {
-  
+  const [peopleSearch, setPeopleSearch] = useState<string>('')
+  const [peopleSort, setPeopleSort] = useState<iSort | null>(ePeopleSort.SCORE_PLACE)
+  const [isPeopleCardsCollapsed, setIsPeopleCardsCollapsed] = useState<boolean>(true)
   const [shownPersons, setShownPersons] = useState<iPerson[]>([])
   const [scrolledPersons, setScrolledPersons] = useState<iPerson[]>([])
   const [hasPersonsToScroll, setHasPersonsToScroll] = useState<boolean>(true)
@@ -59,18 +49,14 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     if (peopleSort) {
       localShownPersons = sortPersons({ persons: localShownPersons, ...peopleSort })
     }
-    if (peopleFilter) {
-      localShownPersons = filterPersons({ persons: localShownPersons, ...peopleFilter })
-    }
     if (peopleSearch !== '') {
       localShownPersons = searchPersons({ persons: localShownPersons, value: peopleSearch })
     }
 
     resetShownPersons(localShownPersons)
     console.log(new Date().toTimeString(), 'fetchData hook ended')
-  }, [peopleSort, peopleFilter, peopleSearch])
+  }, [peopleSort, peopleSearch])
 
-  
   const resetShownPersons = (localShownPersons = persons): void => {
     localShownPersons = shiftCurPerson({ persons: localShownPersons, curPerson: curPerson })
     setShownPersons(localShownPersons)
@@ -108,34 +94,14 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     fetchDataToScroll(localShownPersons, 1)
   }
 
-  const onSearchFocus = (): void => {
-    setPeopleFilter(null)
-  }
-
   const panelHeader = (
     <FixedLayout vertical="top">
       <PanelHeader separator={false} before={<PanelHeaderBack onClick={goHome} />}>
-        Вожатые
+        Участники ШВА
       </PanelHeader>
       <div className="people-panel__header">
-        <Search
-          autoFocus
-          onFocus={onSearchFocus}
-          className="people-panel__header-search"
-          value={peopleSearch}
-          onChange={onSearchChange}
-        />
+        <Search autoFocus className="people-panel__header-search" value={peopleSearch} onChange={onSearchChange} />
         <div className="people-panel__header-buttons">
-          {peopleFilter ? (
-            <IconButton onClick={() => setPeopleFilter(null)}>
-              <IconUnfilter className="people-panel__header-buttons-unfilter-svg" />
-            </IconButton>
-          ) : (
-            <IconButton onClick={() => setActiveModal(eModalIds.PeopleFilters)}>
-              <IconFilter className="people-panel__header-buttons-filter-svg" />
-            </IconButton>
-          )}
-
           {isPeopleCardsCollapsed ? (
             <IconButton onClick={() => setIsPeopleCardsCollapsed(!isPeopleCardsCollapsed)}>
               <IconExpand className="people-panel__header-buttons-expand-svg" />
@@ -156,8 +122,8 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
         {shownPersons && shownPersons.length > 0
           ? `${
               shownPersons.length % 10 === 1
-                ? 'Найден ' + shownPersons.length.toString() + ' вожатый'
-                : 'Найдено ' + shownPersons.length.toString() + ' вожатых'
+                ? 'Найден ' + shownPersons.length.toString() + ' участник'
+                : 'Найдено ' + shownPersons.length.toString() + ' участников'
             }`
           : 'Никого не найдено'}
       </Footer>
@@ -176,11 +142,12 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
             hasMore={hasPersonsToScroll}
             loader={<Spinner size="small" style={{ margin: '20px 0' }} />}
           >
-            {scrolledPersons.map((person) => (
+            {scrolledPersons.map((person, index) => (
               <PersonCard
-                key={person.vk_id}
+                key={index}
                 person={person}
                 isCurPerson={person === curPerson}
+                scoringMeta={scoringMeta}
                 isCardsCollapsed={isPeopleCardsCollapsed}
               />
             ))}

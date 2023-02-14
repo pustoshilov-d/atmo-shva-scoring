@@ -1,5 +1,5 @@
-import { eModalIds, eViewIds } from '@src/shared/enums'
-import { iChat, iFilter, iMap, iPerson, iSort, iStat } from '@src/shared/types'
+import { eViewIds } from '@src/shared/enums'
+import { iPerson, iScoringMeta } from '@src/shared/types'
 import { UserInfo } from '@vkontakte/vk-bridge'
 import { ViewProps } from '@vkontakte/vkui'
 
@@ -13,15 +13,7 @@ export interface iNonAuthViewsProps extends iCustomViewProps {
 }
 
 export interface iMainViewProps extends iCustomViewProps {
-  setActiveModal: (modalId: eModalIds | null) => void
-  setIsPopout: (isPopout: boolean) => void
-  stats: iStat[]
-  chats: iChat[]
-  maps: iMap[]
   persons: iPerson[]
   curPerson: iPerson | undefined
-  peopleSort: iSort | null
-  setPeopleSort: (v: iSort | null) => void
-  peopleFilter: iFilter | null
-  setPeopleFilter: (v: iFilter | null) => void
+  scoringMeta: iScoringMeta
 }

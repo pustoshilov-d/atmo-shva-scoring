@@ -1,37 +1,39 @@
-import { REACT_APP_GSHEETS_API_URL, REACT_APP_GSHEETS_SHEET_ID } from '@src/shared/consts'
+import { REACT_APP_APP_ID, REACT_APP_GSHEETS_API_URL } from '@src/shared/consts'
 import bridge from '@vkontakte/vk-bridge'
 import AvatartPathArcticfox from '@assets/img/avatartArcticfox.svg'
-import { iStat, iChat, iMap, iGsheetsResDTO, iPersonDTO, iPerson } from '../types'
+import { iGsheetsResDTO, iPersonDTO, iPerson, iScoringMeta } from '../types'
 import apiService from './ApiService'
 
 
 const url = REACT_APP_GSHEETS_API_URL || ""
 
-export const getGsheetsData = async (): Promise<[iPerson[], iStat[], iChat[], iMap[]]> => {
+export const getGsheetsData = async (): Promise<[iPerson[], iScoringMeta]> => {
   console.log(new Date().toTimeString(), 'getGsheetsData sent')
   console.log(url)
   const gsheetsData = await apiService.get<iGsheetsResDTO>(url)
   console.log(new Date().toTimeString(), 'getGsheetsData recieved')
-  let persons = suitePersons(gsheetsData.people)
+  let persons = suitePersons(gsheetsData.scoring)
   persons = await updatePhotos(persons)
-  return [persons, gsheetsData.stats, gsheetsData.chats, gsheetsData.map]
+  return [persons, gsheetsData.scoring_meta]
 }
 
 export const suitePersons = (persons: iPersonDTO[]): iPerson[] => {
   // let personsToSet = persons.map((item) => (_updateBoolean(item)))
   let personsToSet: iPerson[] = persons.map((item) => ({
     ...item,
-    'is_student': JSON.parse(item.is_student.toLowerCase()),
-    'is_po_active': JSON.parse(item.is_po_active.toLowerCase()),
-    'sex': item.sex === 'м' ? 'м' : 'ж',
+    "medals": item.medals ? item.medals.split(",").map(m=>m.trim()) : [],
+    "excluded": item.excluded?.toLowerCase().trim() === "да"
+    // 'is_student': JSON.parse(item.is_student.toLowerCase()),
+    // 'is_po_active': JSON.parse(item.is_po_active.toLowerCase()),
+    // 'sex': item.sex === 'м' ? 'м' : 'ж',
   }))
 
   return personsToSet
 }
 
-export const getPhotoUrls = async (ids: number[]): Promise<{ photo: string; id: number }[]> => {
+export const getPhotoUrls = async (ids: (number | undefined)[]): Promise<{ photo: string; id: number }[]> => {
   const { access_token } = await bridge.send('VKWebAppGetAuthToken', {
-    app_id: 51517415,
+    app_id: REACT_APP_APP_ID,
     scope: '',
   })
   console.log({ access_token })

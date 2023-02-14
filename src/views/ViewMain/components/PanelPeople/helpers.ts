@@ -1,5 +1,4 @@
-import { eModalIds, eFilterStats } from '@shared/enums';
-import { iPerson, iStat, iStatRow } from '@shared/types';
+import { iPerson } from '@shared/types'
 import { ru } from 'convert-layout'
 import _ from 'lodash'
 
@@ -14,13 +13,18 @@ export const searchPersons = (p: { persons: iPerson[]; value: string }): iPerson
     localPersons = localPersons.filter(
       (person) =>
         p.value === '' ||
-        (person.nickname && person.nickname.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
         (person.name &&
           person.surname &&
           `${person.name} ${person.surname}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
         (person.name &&
           person.surname &&
-          `${person.surname} ${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value))
+          `${person.surname} ${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
+        (person.name &&
+          !person.surname &&
+          `${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
+        (!person.name &&
+          person.surname &&
+          `${person.surname}`.toUpperCase().replace('Ё', 'Е').includes(p.value))
     )
   }
   return localPersons
@@ -35,7 +39,7 @@ export const sortPersons = (p: { persons: iPerson[]; key: string; order: 1 | -1 
   }
 
   let localPersons = p.persons.sort((a, b) => {
-    let fieldA, fieldB: string | number
+    let fieldA, fieldB: any
     switch (p.key) {
       case 'name':
         fieldA = `${a.name} ${a.surname}`.toUpperCase()
@@ -99,21 +103,4 @@ export const shiftCurPerson = (p: { persons: iPerson[]; curPerson: iPerson | und
       )[0]
     )
   return p.persons
-}
-
-export function getModalId(value: string): eModalIds {
-  const indexOfS = Object.values(eModalIds).indexOf(value as unknown as eModalIds)
-  return Object.keys(eModalIds)[indexOfS] as unknown as eModalIds
-}
-
-export const getPeopleFilters = (p: { stats: iStat[] }): iStatRow[] => {
-  let statRows: iStatRow[] = []
-  p.stats.forEach((stat) => {
-    if (eFilterStats.includes(stat.stat_id as unknown as eModalIds)) {
-      stat.rows.forEach((row) => {
-        statRows.push(row)
-      })
-    }
-  })
-  return statRows
 }
