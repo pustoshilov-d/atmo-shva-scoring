@@ -4,7 +4,6 @@ import AvatartPathArcticfox from '@assets/img/avatartArcticfox.svg'
 import { iGsheetsResDTO, iPersonDTO, iPerson, iScoringMeta } from '../types'
 import apiService from './ApiService'
 
-
 const url = REACT_APP_GSHEETS_API_URL || ""
 
 export const getGsheetsData = async (): Promise<[iPerson[], iScoringMeta]> => {

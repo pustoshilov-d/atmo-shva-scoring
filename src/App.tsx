@@ -93,7 +93,13 @@ const App: FC = () => {
                 <ViewBlock id={eViewIds.Block} />
                 <ViewNotLoaded id={eViewIds.NotLoaded} />
                 <ViewLoader id={eViewIds.Loader} />
-                <ViewMain id={eViewIds.Main} fetchedUser={fetchedUser} persons={persons} curPerson={curPerson} scoringMeta={scoringMeta} />
+                <ViewMain
+                  id={eViewIds.Main}
+                  fetchedUser={fetchedUser}
+                  persons={persons}
+                  curPerson={curPerson}
+                  scoringMeta={scoringMeta}
+                />
               </Root>
             </SplitCol>
           </SplitLayout>

@@ -13,6 +13,7 @@ export enum eViewIds {
   Main = 'main',
 }
 
+
 export enum ePanelIds {
   People = 'people',
   Block = 'block',
