@@ -1,3 +1,10 @@
 {
-  "recommendations": ["esbenp.prettier-vscode", "gruntfuggly.todo-tree"]
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "gruntfuggly.todo-tree",
+    "mhutchie.git-graph",
+    "eamodio.gitlens",
+    "meezilla.json",
+    "dbaeumer.vscode-eslint"
+  ]
 }

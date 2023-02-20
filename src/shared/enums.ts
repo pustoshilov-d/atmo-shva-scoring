@@ -19,3 +19,8 @@ export enum ePanelIds {
   NotLoaded = 'notloaded',
   Loader = 'loader',
 }
+
+export enum eTabbarItemIds {
+  Offline = 'offline',
+  Online = 'online',
+}

@@ -11,18 +11,21 @@ import {
   Search,
   Spacing,
   Spinner,
+  Tabbar,
+  TabbarItem,
 } from '@vkontakte/vkui'
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { PersonCard } from '@components/PersonCard'
 import { iPerson, iSort } from '@src/shared/types'
-import {ePeopleSort} from '@src/shared/enums'
+import {ePeopleSort, eTabbarItemIds} from '@src/shared/enums'
 import '../../index.css'
 import { iPeoplePanelProps } from '../types'
 import { CHUNK_SIZE } from './consts'
 import { searchPersons, shiftCurPerson, sortPersons } from './helpers'
 import './index.css'
+import { Icon28NewsfeedOutline, Icon28ClipOutline } from '@vkontakte/icons'
 
 export const PanelPeople: FC<iPeoplePanelProps> = ({
   fetchedUser,
@@ -33,6 +36,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
   scoringMeta,
   ...rest
 }) => {
+  const [tabbarItemId, setTabbarItemId] = useState<eTabbarItemIds>()
   const [peopleSearch, setPeopleSearch] = useState<string>('')
   const [peopleSort, setPeopleSort] = useState<iSort | null>(ePeopleSort.SCORE_PLACE)
   const [isPeopleCardsCollapsed, setIsPeopleCardsCollapsed] = useState<boolean>(true)
@@ -127,6 +131,23 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
             }`
           : 'Никого не найдено'}
       </Footer>
+      <Tabbar>
+        <TabbarItem 
+          selected={tabbarItemId === eTabbarItemIds.Offline} 
+          text="Оффлайн"
+          onClick={() => setTabbarItemId(eTabbarItemIds.Offline)}
+        >
+          <Icon28NewsfeedOutline />
+        </TabbarItem>
+
+        <TabbarItem 
+          selected={tabbarItemId === eTabbarItemIds.Online} 
+          text="Онлайн"
+          onClick={() => setTabbarItemId(eTabbarItemIds.Online)}
+        >
+          <Icon28ClipOutline />
+        </TabbarItem>
+      </Tabbar>
     </FixedLayout>
   )
 

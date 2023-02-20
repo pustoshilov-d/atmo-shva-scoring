@@ -25,7 +25,7 @@ yarn run tunnel
 # даст ссылку, которую в Настройках аппа в ВК надо в тест vk.com url вставить
 ```
 
-Деплой прода
+Деплой prod
 ```
 yarn build
 yarn deploy
