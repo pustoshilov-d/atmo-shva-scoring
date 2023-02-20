@@ -4,7 +4,6 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "@pbe/react-yandex-maps": "^1.2.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -23,19 +22,14 @@
     "convert-layout": "^0.11.1",
     "cross-env": "^7.0.3",
     "install": "^0.13.0",
-    "lodash": "^4.17.21",
-    "mobx": "^6.7.0",
-    "mobx-react": "^7.6.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-scripts": "^5.0.1",
-    "react-yandex-maps": "^4.6.0",
     "typescript": "^4.9.4",
     "web-vitals": "^2.1.4",
-    "yandex-map-react": "^1.1.1"
   },
   "scripts": {
     "start": "cross-env PORT=10888 HTTPS=true craco start",
