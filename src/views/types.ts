@@ -11,6 +11,10 @@ export interface iNonAuthViewsProps extends iCustomViewProps {
   setActiveView?: (view: eViewIds) => void
 }
 
+export interface iModeratorViewProps extends iNonAuthViewsProps {
+  
+}
+
 
 export interface iMainViewProps extends iCustomViewProps {
   curPerson: iPerson | undefined
