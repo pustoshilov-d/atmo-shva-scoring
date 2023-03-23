@@ -1,58 +1,53 @@
-import { REACT_APP_APP_ID, REACT_APP_GSHEETS_API_URL } from '@src/shared/consts'
-import bridge from '@vkontakte/vk-bridge'
 import AvatartPathArcticfox from '@assets/img/avatartArcticfox.svg'
-import { iGsheetsResDTO, iPersonDTO, iPerson, iScoringMeta } from '../types'
+import { sortPersons } from '@views/ViewMain/components/PanelPeople/helpers'
+import { REACT_APP_GSHEETS_API_URL } from '../consts'
+
+import { ePeopleSort, eTabbarItemIds } from '../enums'
+import { iConfig, iGsheetsResDTO, iPerson, iPersonDTO, iScoringInfo } from '../types'
 import apiService from './ApiService'
+import { getPhotoUrls } from './vkbridge'
 
-const url = REACT_APP_GSHEETS_API_URL || ""
+export const getGsheetsData = async (): Promise<[iPerson[], iScoringInfo, iConfig]> => {
+  const gheetsAPI = REACT_APP_GSHEETS_API_URL || ""
 
-export const getGsheetsData = async (): Promise<[iPerson[], iScoringMeta]> => {
   console.log(new Date().toTimeString(), 'getGsheetsData sent')
-  console.log(url)
-  const gsheetsData = await apiService.get<iGsheetsResDTO>(url)
+  const gsheetsData = await apiService.get<iGsheetsResDTO>(gheetsAPI)
+  // console.log({ gsheetsData })
   console.log(new Date().toTimeString(), 'getGsheetsData recieved')
-  let persons = suitePersons(gsheetsData.scoring)
-  persons = await updatePhotos(persons)
-  return [persons, gsheetsData.scoring_meta]
+
+  const { online, offline, medalsMeta, persons, config } = gsheetsData
+  let personsToSet = suitePersons(persons)
+  personsToSet = sortPersons({ persons: personsToSet, ...ePeopleSort.SUM })
+  personsToSet = await updatePhotos(personsToSet)
+
+  let onlineToSet = { ...online, persons: personsToSet.filter((p) => p.format === eTabbarItemIds.Online) }
+  onlineToSet = { ...onlineToSet, persons: onlineToSet.persons }
+  let offlineToSet = { ...offline, persons: personsToSet.filter((p) => p.format === eTabbarItemIds.Offline) }
+  offlineToSet = { ...offlineToSet, persons: offlineToSet.persons }
+
+  personsToSet = offlineToSet.persons.concat(onlineToSet.persons)
+  return [personsToSet, { online: onlineToSet, offline: offlineToSet, medalsMeta}, config]
 }
 
-export const suitePersons = (persons: iPersonDTO[]): iPerson[] => {
+const suitePersons = (persons: iPersonDTO[]): iPerson[] => {
   // let personsToSet = persons.map((item) => (_updateBoolean(item)))
-  let personsToSet: iPerson[] = persons.map((item) => ({
-    ...item,
-    "medals": item.medals ? item.medals.split(",").map(m=>m.trim()) : [],
-    "excluded": item.excluded?.toLowerCase().trim() === "да"
-    // 'is_student': JSON.parse(item.is_student.toLowerCase()),
-    // 'is_po_active': JSON.parse(item.is_po_active.toLowerCase()),
-    // 'sex': item.sex === 'м' ? 'м' : 'ж',
-  }))
+  // console.log({ persons })
+  let personsToSet: iPerson[] = persons.map((item) => {
+    // console.log(item.medals)
+    return {
+      ...item,
+      'medals': item.medals
+        ? item.medals
+            .toString()
+            .replace('\n', ',')
+            .split(',')
+            .map((m) => m.trim())
+        : [],
+      'sex': item.sex || 'М',
+    }
+  })
 
   return personsToSet
-}
-
-export const getPhotoUrls = async (ids: (number | undefined)[]): Promise<{ photo: string; id: number }[]> => {
-  const { access_token } = await bridge.send('VKWebAppGetAuthToken', {
-    app_id: REACT_APP_APP_ID,
-    scope: '',
-  })
-  console.log({ access_token })
-  let result = await bridge.send('VKWebAppCallAPIMethod', {
-    method: 'users.get',
-    params: {
-      user_ids: ids.join(','),
-      fields: 'photo_max,has_photo',
-      v: '5.131',
-      access_token: access_token,
-    },
-  })
-  let photos: (any | null)[] = result.response
-  console.log({ photos })
-  photos = photos.map((item: { deactivated?: string; photo_max: string; has_photo: number; id: number }) => ({
-    photo: item.deactivated || item.has_photo === 0 ? null : item.photo_max,
-    id: item.id,
-  }))
-  console.log({ photos })
-  return photos
 }
 
 export const updatePhotos = async (localPersons: iPerson[]): Promise<iPerson[]> => {

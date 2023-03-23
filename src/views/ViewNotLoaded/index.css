@@ -14,7 +14,10 @@
   margin: 0px auto;
 }
 .view-notloaded__image {
-  width: 80%;
-  max-width: 500px;
-  margin: 0 auto;
+  margin: 0px auto;
+  /* width: 20vh; */
+  max-width: 300px;
+  max-height: 300px;
+  height: 30vh;
+  padding: 5px;
 }

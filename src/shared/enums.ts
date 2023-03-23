@@ -1,9 +1,10 @@
 import { iSort } from './types'
 
-export const ePeopleSort: { [key: string]: iSort | null } = {
+export const ePeopleSort: { [k: string]: iSort } = {
   NAME: { key: 'name', order: 1 } as unknown as iSort,
   SURNAME: { key: 'surname', order: 1 } as unknown as iSort,
-  SCORE_PLACE: { key: 'score_place', order: 1 } as unknown as iSort,
+  PLACE: { key: 'place', order: 1 } as unknown as iSort,
+  SUM: { key: 'sum', order: -1 } as unknown as iSort,
 }
 
 export enum eViewIds {
@@ -13,7 +14,6 @@ export enum eViewIds {
   Main = 'main',
 }
 
-
 export enum ePanelIds {
   People = 'people',
   Block = 'block',
@@ -22,6 +22,6 @@ export enum ePanelIds {
 }
 
 export enum eTabbarItemIds {
-  Offline = 'offline',
-  Online = 'online',
+  Offline = 'Оффлайн',
+  Online = 'Онлайн',
 }

@@ -13,16 +13,21 @@
   width: 100% !important;
 }
 
+.infoRow-sub {
+  margin-top: 0px !important;
+}
+
 .vkuiFooter {
   padding: 5px 0px 8px 0px !important ;
-  margin: 0px !important;
+  margin: 0px 0px 45px 0px !important;
   background: var(--vkui--color_background_content);
   border-top: gray 1px solid;
 }
 
 .root {
-  height: 100%;
-  width: 100%;
+  height: 100% !important;
+  width: 100% !important;
+  position: fixed !important;
 }
 
 .vkuiPanel__in {

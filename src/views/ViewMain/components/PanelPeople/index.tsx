@@ -7,48 +7,61 @@ import {
   IconButton,
   Panel,
   PanelHeader,
-  PanelHeaderBack,
   Search,
   Spacing,
   Spinner,
   Tabbar,
   TabbarItem,
+  Text,
 } from '@vkontakte/vkui'
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import blockGif from '@assets/img/cat_wait.gif'
 import { PersonCard } from '@components/PersonCard'
-import { iPerson, iSort } from '@src/shared/types'
-import {ePeopleSort, eTabbarItemIds} from '@src/shared/enums'
+import { ePeopleSort, eTabbarItemIds } from '@src/shared/enums'
+import { iFormat, iPerson, iSort } from '@src/shared/types'
+import { Icon28ComputerOutline, Icon28UsersOutline } from '@vkontakte/icons'
 import '../../index.css'
 import { iPeoplePanelProps } from '../types'
 import { CHUNK_SIZE } from './consts'
 import { searchPersons, shiftCurPerson, sortPersons } from './helpers'
 import './index.css'
-import { Icon28NewsfeedOutline, Icon28ClipOutline } from '@vkontakte/icons'
 
 export const PanelPeople: FC<iPeoplePanelProps> = ({
   fetchedUser,
-  persons,
   curPerson,
   setActivePanel,
-  goHome,
-  scoringMeta,
+  scoringInfo,
   ...rest
 }) => {
-  const [tabbarItemId, setTabbarItemId] = useState<eTabbarItemIds>()
+  const [tabbarItemId, setTabbarItemId] = useState<eTabbarItemIds>(curPerson?.format || eTabbarItemIds.Offline)
+  const [format, setFormat] = useState<iFormat>()
   const [peopleSearch, setPeopleSearch] = useState<string>('')
-  const [peopleSort, setPeopleSort] = useState<iSort | null>(ePeopleSort.SCORE_PLACE)
+  const [peopleSort, setPeopleSort] = useState<iSort | null>(ePeopleSort.SUM)
   const [isPeopleCardsCollapsed, setIsPeopleCardsCollapsed] = useState<boolean>(true)
+
+  const [persons, setPersons] = useState<iPerson[]>([])
   const [shownPersons, setShownPersons] = useState<iPerson[]>([])
   const [scrolledPersons, setScrolledPersons] = useState<iPerson[]>([])
   const [hasPersonsToScroll, setHasPersonsToScroll] = useState<boolean>(true)
   const [scrollChunkNum, setScrollChunkNum] = useState<number>(1)
 
   useEffect(() => {
-    console.log(new Date().toTimeString(), 'fetchData hook called')
-    console.log({ persons })
+    console.log(new Date().toTimeString(), 'tabbarItemId hook called')
+    const localFormat = tabbarItemId === eTabbarItemIds.Online ? scoringInfo.online : scoringInfo.offline
+    setFormat(localFormat)
+    setPersons(localFormat.persons)
+    setPeopleSearch('')
+    console.log(new Date().toTimeString(), 'tabbarItemId hook ended')
+  }, [tabbarItemId])
 
+  useEffect(() => {
+    console.log(new Date().toTimeString(), 'peopleSort, peopleSearch  hook called')
+    if (!persons) {
+      return
+    }
+    // console.log(persons.length, { tabbarItemId })
     let localShownPersons = persons
     if (peopleSort) {
       localShownPersons = sortPersons({ persons: localShownPersons, ...peopleSort })
@@ -56,10 +69,9 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     if (peopleSearch !== '') {
       localShownPersons = searchPersons({ persons: localShownPersons, value: peopleSearch })
     }
-
     resetShownPersons(localShownPersons)
-    console.log(new Date().toTimeString(), 'fetchData hook ended')
-  }, [peopleSort, peopleSearch])
+    console.log(new Date().toTimeString(), 'peopleSort, peopleSearch hook ended')
+  }, [peopleSort, peopleSearch, persons])
 
   const resetShownPersons = (localShownPersons = persons): void => {
     localShownPersons = shiftCurPerson({ persons: localShownPersons, curPerson: curPerson })
@@ -75,12 +87,12 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     if (localScrollChunkNum * CHUNK_SIZE >= localShownPersons.length - 1) {
       setScrolledPersons(localShownPersons)
       setHasPersonsToScroll(false)
-      console.log(localShownPersons)
+      // console.log(localShownPersons)
     } else {
       const endIndex = localScrollChunkNum * CHUNK_SIZE
       setScrolledPersons(localShownPersons.slice(0, endIndex))
       setHasPersonsToScroll(true)
-      console.log(localShownPersons.slice(0, endIndex))
+      // console.log(localShownPersons.slice(0, endIndex))
     }
     setScrollChunkNum(localScrollChunkNum + 1)
     console.log(new Date().toTimeString(), 'fetchDataToScroll ended')
@@ -100,11 +112,15 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
 
   const panelHeader = (
     <FixedLayout vertical="top">
-      <PanelHeader separator={false} before={<PanelHeaderBack onClick={goHome} />}>
-        Участники ШВА
-      </PanelHeader>
+      <PanelHeader separator={false}>Участники ШВА</PanelHeader>
       <div className="people-panel__header">
-        <Search autoFocus className="people-panel__header-search" value={peopleSearch} onChange={onSearchChange} />
+        <Search
+          autoFocus
+          className="people-panel__header-search"
+          placeholder="Имя, фамилия или бейдж"
+          value={peopleSearch}
+          onChange={onSearchChange}
+        />
         <div className="people-panel__header-buttons">
           {isPeopleCardsCollapsed ? (
             <IconButton onClick={() => setIsPeopleCardsCollapsed(!isPeopleCardsCollapsed)}>
@@ -121,60 +137,77 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
   )
 
   const panelFooter = (
-    <FixedLayout vertical="bottom">
-      <Footer>
-        {shownPersons && shownPersons.length > 0
-          ? `${
-              shownPersons.length % 10 === 1
-                ? 'Найден ' + shownPersons.length.toString() + ' участник'
-                : 'Найдено ' + shownPersons.length.toString() + ' участников'
-            }`
-          : 'Никого не найдено'}
-      </Footer>
-      <Tabbar>
-        <TabbarItem 
-          selected={tabbarItemId === eTabbarItemIds.Offline} 
-          text="Оффлайн"
-          onClick={() => setTabbarItemId(eTabbarItemIds.Offline)}
-        >
-          <Icon28NewsfeedOutline />
-        </TabbarItem>
+    <>
+      <FixedLayout vertical="bottom">
+        <Footer>
+          {shownPersons && shownPersons.length > 0
+            ? `${
+                shownPersons.length % 10 === 1
+                  ? 'Найден ' + shownPersons.length.toString() + ' участник'
+                  : shownPersons.length % 10 > 1 && shownPersons.length % 10 < 5
+                  ? 'Найдено ' + shownPersons.length.toString() + ' участника'
+                  : 'Найдено ' + shownPersons.length.toString() + ' участников'
+              }`
+            : 'Никого не найдено'}
+        </Footer>
 
-        <TabbarItem 
-          selected={tabbarItemId === eTabbarItemIds.Online} 
-          text="Онлайн"
-          onClick={() => setTabbarItemId(eTabbarItemIds.Online)}
+        <Tabbar shadow={false}>
+          <TabbarItem
+            selected={tabbarItemId === eTabbarItemIds.Offline}
+            text={eTabbarItemIds.Offline}
+            onClick={() => setTabbarItemId(eTabbarItemIds.Offline)}
+          >
+            <Icon28UsersOutline />
+          </TabbarItem>
+
+          <TabbarItem
+            selected={tabbarItemId === eTabbarItemIds.Online}
+            text={eTabbarItemIds.Online}
+            onClick={() => setTabbarItemId(eTabbarItemIds.Online)}
+          >
+            <Icon28ComputerOutline />
+          </TabbarItem>
+        </Tabbar>
+      </FixedLayout>
+    </>
+  )
+
+  const content = (
+    <Group>
+      {scrolledPersons && scrolledPersons.length > 0 && (
+        <InfiniteScroll
+          dataLength={scrolledPersons.length}
+          next={fetchDataToScroll}
+          hasMore={hasPersonsToScroll}
+          loader={<Spinner size="small" style={{ margin: '20px 0' }} />}
         >
-          <Icon28ClipOutline />
-        </TabbarItem>
-      </Tabbar>
-    </FixedLayout>
+          {scrolledPersons.map((person, index) => (
+            <PersonCard
+              key={index}
+              person={person}
+              isCurPerson={person === curPerson}
+              scoringMeta={format!.meta}
+              medalsMeta={scoringInfo.medalsMeta}
+              isCardsCollapsed={isPeopleCardsCollapsed}
+            />
+          ))}
+        </InfiniteScroll>
+      )}
+    </Group>
+  )
+
+  const updating = (
+    <div className="people-panel__updating-content">
+      <Text className="people-panel__updating-content-text">Рейтинг на обновлении</Text>
+      <img src={blockGif} alt="Access denied" className="people-panel__updating-content-image" />
+    </div>
   )
 
   return (
     <Panel {...rest}>
       {panelHeader}
       <Spacing size={100} />
-      <Group>
-        {scrolledPersons && scrolledPersons.length > 0 && (
-          <InfiniteScroll
-            dataLength={scrolledPersons.length}
-            next={fetchDataToScroll}
-            hasMore={hasPersonsToScroll}
-            loader={<Spinner size="small" style={{ margin: '20px 0' }} />}
-          >
-            {scrolledPersons.map((person, index) => (
-              <PersonCard
-                key={index}
-                person={person}
-                isCurPerson={person === curPerson}
-                scoringMeta={scoringMeta}
-                isCardsCollapsed={isPeopleCardsCollapsed}
-              />
-            ))}
-          </InfiniteScroll>
-        )}
-      </Group>
+      {(format && format.enable) || fetchedUser?.isAppModerator ? content : updating}
       <Spacing size={30} />
       {panelFooter}
     </Panel>

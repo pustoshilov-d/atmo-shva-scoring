@@ -23,6 +23,11 @@
   flex-direction: row;
 }
 
+.person-card__header-title-star {
+  font-size: 10px;
+  padding-left: 4px;
+}
+
 .person-card__content-buttons {
   display: flex;
   flex-direction: row;
@@ -54,10 +59,10 @@
 
 .person-card__header-subheader-scoring {
   color: var(--vkui--color_text_subhead);
-  font-family: var(--vkui--font_title3--font_family--regular);
+  /* font-family: var(--vkui--font_title3--font_family--regular);
   font-size: var(--vkui--font_title3--font_size--regular);
   font-weight: var(--vkui--font_title3--font_weight--regular);
-  line-height: var(--vkui--font_title3--line_height--regular);
+  line-height: var(--vkui--font_title3--line_height--regular); */
 }
 
 .person-card__header-subheader-medals {

@@ -1,4 +1,4 @@
-import loaderGif from '@assets/img/arctic_fox.gif'
+import loaderGif from '@assets/img/atmo_loader_opt.gif'
 import { ePanelIds } from '@src/shared/enums'
 import { iNonAuthViewsProps } from '@views/types'
 import { Footnote, Panel, PanelHeader, View } from '@vkontakte/vkui'
@@ -8,29 +8,14 @@ import './index.css'
 
 const TEXTS = [
   'Кормим нашего песца',
-  'Загружаем базу вожатых',
-  'Проверяем Подслушку',
-  <>
-    Кстати, песца нарисовал{' '}
-    <a
-      target={'_blank'}
-      rel={'noopener'}
-      style={{ color: 'inherit' }}
-      href="https://www.deviantart.com/chozobudgie/art/Arctic-fox-347635252"
-    >
-      Chozobudgie
-    </a>
-  </>,
-  'Ретушируем аватарки',
-  'Ищем вожатых в Москве',
-  '...и в Таиланде и Италии',
+  'Загружаем базу участников ШВА',
+  'Добавляем яркости',
+  'Продумываем легенду',
   'Почти загрузилось, не закрывай...',
-  'Ремонтируем Кратово',
-  'Возвращаем Синезёрки',
-  'Собираем вещи в ХМАО',
-  'Или лучше в Рузу-дом?',
-  'Делаем Атмосферу great again',
-  'Бежим в светлое будущее',
+  'Поиграем в Чикен оф Шедоу?',
+  'Ищем крутые лагеря на лето',
+  'Заряжаем все устройства',
+  'Прокачиваем soft-скиллы',
   'Ещё чуть-чуть загрузки...',
 ]
 

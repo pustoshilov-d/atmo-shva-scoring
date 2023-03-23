@@ -22,6 +22,8 @@ yarn start
 
 #Второй терминал
 yarn run tunnel 
+# ИЛИ
+ssh -R 80:localhost:10888 localhost.run
 # даст ссылку, которую в Настройках аппа в ВК надо в тест vk.com url вставить
 ```
 

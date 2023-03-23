@@ -1,5 +1,5 @@
 import { ViewNotLoaded } from '@views/ViewNotLoaded'
-import bridge, { AppearanceType, UserInfo } from '@vkontakte/vk-bridge'
+import bridge, { AppearanceType } from '@vkontakte/vk-bridge'
 import {
   AdaptivityProvider,
   AppRoot,
@@ -12,9 +12,9 @@ import {
 import '@vkontakte/vkui/dist/vkui.css'
 import { FC, useEffect, useState } from 'react'
 import { getGsheetsData } from './shared/api/gsheets'
-import { REACT_APP_VK_ATMOMY_GROUP_ID } from './shared/consts'
+import { checkIsAtmoMember } from './shared/api/vkbridge'
 import { eViewIds } from './shared/enums'
-import { iPerson, iScoringMeta } from './shared/types'
+import { ExtededUserInfo, iConfig, iPerson, iScoringInfo } from './shared/types'
 import { ViewBlock } from './views/ViewBlock'
 import { ViewLoader } from './views/ViewLoader'
 import { ViewMain } from './views/ViewMain'
@@ -22,10 +22,10 @@ import { ViewMain } from './views/ViewMain'
 const App: FC = () => {
   const [appearance, setAppearance] = useState<AppearanceType>('dark')
   const [activeView, setActiveView] = useState<eViewIds>(eViewIds.Loader)
-  const [scoringMeta, setScoringMeta] = useState<iScoringMeta>({})
 
-  const [fetchedUser, setFetchedUser] = useState<UserInfo>()
-  const [persons, setPersons] = useState<iPerson[]>([])
+  const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
+  const [fetchedUser, setFetchedUser] = useState<ExtededUserInfo>()
+  const [config, setConfig] = useState<iConfig>()
   const [curPerson, setCurPerson] = useState<iPerson>()
 
   const { sizeX } = useAdaptivityConditionalRender()
@@ -40,44 +40,50 @@ const App: FC = () => {
 
     async function fetchData() {
       console.log(new Date().toTimeString(), 'App.fetchData hook called')
-      // try {
-      let fetchedUserToSet = await bridge.send('VKWebAppGetUserInfo')
-      let groupInfo = await bridge.send('VKWebAppGetGroupInfo', {
-        group_id: REACT_APP_VK_ATMOMY_GROUP_ID,
-      })
-      console.log({ fetchedUserToSet }, { groupInfo })
-      if (!fetchedUserToSet) {
-        console.log(new Date().toTimeString(), 'Access denied 1')
-        setActiveView(eViewIds.Block)
-      } else {
+      try {
+        let fetchedUserToSet = {
+          ...(await bridge.send('VKWebAppGetUserInfo')),
+          isAtmoMember: false,
+          isAppModerator: false,
+          isShvaParticipant: false,
+        }
+
+        if (!fetchedUserToSet) {
+          console.log(new Date().toTimeString(), 'Access denied 1')
+          setActiveView(eViewIds.Block)
+          return
+        }
         console.log(new Date().toTimeString(), 'Access allowed 1')
 
-        let [personsToSet, scoringMetaToSet] = await getGsheetsData()
+        const [persons, scoringInfoToSet, configToSet] = await getGsheetsData()
         console.log(new Date().toTimeString(), 'getGsheetsData processed')
-        console.log({ personsToSet })
+        // console.log({ scoringInfoToSet })
 
-        if (
-          !personsToSet ||
-          (groupInfo.is_member === 1 && !personsToSet.map((p) => p.vk_id).includes(fetchedUserToSet.id))
-        ) {
+        const isShvaParticipant = persons.map((p) => p.vk_id).includes(fetchedUserToSet.id)
+        const isAtmoMember = await checkIsAtmoMember(fetchedUserToSet.id)
+        const isAppModerator = configToSet?.moderators.includes(fetchedUserToSet.id) || false
+        fetchedUserToSet = { ...fetchedUserToSet, isShvaParticipant, isAtmoMember, isAppModerator }
+        // console.log(fetchedUserToSet)
+
+        if (!scoringInfoToSet || !(isAtmoMember || isShvaParticipant)) {
           console.log(new Date().toTimeString(), 'Access denied 2')
           setActiveView(eViewIds.Block)
-        } else {
-          console.log(new Date().toTimeString(), 'Access allowed 1')
-
-          let curPersonToSet = personsToSet.filter((person) => person.vk_id === fetchedUserToSet?.id)[0] || undefined
-          setFetchedUser(fetchedUserToSet)
-          setCurPerson(curPersonToSet)
-          setPersons(personsToSet)
-          setScoringMeta(scoringMetaToSet)
-          setActiveView(eViewIds.Main)
-          console.log(new Date().toTimeString(), 'App.fetchData hook processed')
+          return
         }
+        console.log(new Date().toTimeString(), 'Access allowed 1')
+
+        let curPersonToSet = persons.filter((person) => person.vk_id === fetchedUserToSet?.id)[0] || undefined
+
+        setConfig(configToSet)
+        setFetchedUser(fetchedUserToSet)
+        setCurPerson(curPersonToSet)
+        setScoringInfo(scoringInfoToSet)
+        setActiveView(eViewIds.Main)
+        console.log(new Date().toTimeString(), 'App.fetchData hook processed')
+      } catch (error) {
+        console.log(new Date().toTimeString(), 'App.fetchData hook error', error)
+        setActiveView(eViewIds.NotLoaded)
       }
-      // } catch (error) {
-      //   console.log(new Date().toTimeString(), 'App.fetchData hook error', error)
-      //   setActiveView(eViewIds.NotLoaded)
-      // }
     }
 
     fetchData()
@@ -96,9 +102,8 @@ const App: FC = () => {
                 <ViewMain
                   id={eViewIds.Main}
                   fetchedUser={fetchedUser}
-                  persons={persons}
                   curPerson={curPerson}
-                  scoringMeta={scoringMeta}
+                  scoringInfo={scoringInfo!}
                 />
               </Root>
             </SplitCol>

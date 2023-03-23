@@ -19,12 +19,9 @@ export const searchPersons = (p: { persons: iPerson[]; value: string }): iPerson
         (person.name &&
           person.surname &&
           `${person.surname} ${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
-        (person.name &&
-          !person.surname &&
-          `${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
-        (!person.name &&
-          person.surname &&
-          `${person.surname}`.toUpperCase().replace('Ё', 'Е').includes(p.value))
+        (person.name && !person.surname && `${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
+        (!person.name && person.surname && `${person.surname}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
+        (person.badge && `${person.badge}`.includes(p.value))
     )
   }
   return localPersons

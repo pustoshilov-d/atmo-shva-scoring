@@ -1,32 +1,91 @@
+import { UserInfo } from '@vkontakte/vk-bridge'
+import { eTabbarItemIds } from './enums'
+
 export interface iGsheetsResDTO {
-  scoring: iPersonDTO[]
-  scoring_meta: iScoringMeta
+  online: iFormatDTO
+  offline: iFormatDTO
+  medalsMeta: iMedalsMeta
+  persons: iPersonDTO[]
+  config: iConfig
+}
+
+export interface iConfig {
+  shva_group_id: number
+  moderators: number[]
+  [key: string]: string[] | string | number | number[] | boolean
+}
+
+export interface iScoringInfo {
+  online: iFormat
+  offline: iFormat
+  medalsMeta: iMedalsMeta
+}
+
+export interface iMedalsMeta {
+  [key: string]: iMedalsMetaKey
+}
+
+export interface iMedalsMetaKey {
+  title_male: string
+  title_female: string
+  descr?: string
+  disable?: boolean
+  limit?: number
+  type?: 'dynamic' | 'static'
+}
+
+export interface iFormatDTO {
+  enable: boolean
+  meta: iScoringMeta
+}
+
+export interface iFormat {
+  enable: boolean
+  meta: iScoringMeta
+  persons: iPerson[]
 }
 
 export interface iScoringMeta {
-  [key: string]: string
+  [key: string]: iScoringMetaKey
+}
+
+export interface iScoringMetaKey {
+  title_ru?: string
+  max_score?: number
+  is_dynamic?: boolean
+  column?: string
 }
 
 export interface iPersonDTO {
+  sex?: 'Ж' | 'М'
   photo?: string
   vk_id?: number
   name?: string
   surname?: string
   medals?: string
-  score_place: number
-  score_sum: number
-  excluded: string
+  badge?: number | string
+  team?: number
+  message?: string
+  format: eTabbarItemIds
+  place: number
+  sum: number
+  excluded: boolean
   [key: string]: string | number | boolean | undefined
 }
 
 export interface iPerson {
+  sex: 'Ж' | 'М'
   photo?: string
   vk_id?: number
   name?: string
   surname?: string
   medals?: string[]
-  score_place: number
-  score_sum: number
+  badge?: number | string
+  team?: number
+  message?: string
+  format: eTabbarItemIds
+  place: number
+  sum: number
   excluded: boolean
   [key: string]: string | number | boolean | string[] | number[] | undefined
 }
@@ -39,4 +98,10 @@ export interface iFilter {
 export interface iSort {
   key: string
   order: 1 | -1
+}
+
+export interface ExtededUserInfo extends UserInfo {
+  isAtmoMember: boolean
+  isShvaParticipant: boolean
+  isAppModerator: boolean
 }
