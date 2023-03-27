@@ -18,7 +18,7 @@ export const getAccessToken = async (): Promise<string> => {
 // }
 
 export const getPhotoUrls = async (ids: (number | undefined)[]): Promise<{ photo: string; id: number }[]> => {
-  console.log({ ids })
+  // console.log({ ids })
   let result = await bridge.send('VKWebAppCallAPIMethod', {
     method: 'users.get',
     params: {
@@ -49,4 +49,14 @@ export const checkIsAtmoMember = async (id: number): Promise<boolean> => {
   })
   const atmoMembers: Array<number> = response.items
   return atmoMembers.includes(id)
+}
+
+
+export const getGroupToken = async (groupId: number): Promise<string> => {
+  const {access_token} = await bridge.send("VKWebAppGetCommunityToken", {
+    app_id: REACT_APP_APP_ID,
+    group_id: groupId,
+    scope: 'app_widget'
+  })
+  return access_token
 }

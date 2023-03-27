@@ -123,11 +123,11 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
         />
         <div className="people-panel__header-buttons">
           {isPeopleCardsCollapsed ? (
-            <IconButton onClick={() => setIsPeopleCardsCollapsed(!isPeopleCardsCollapsed)}>
+            <IconButton aria-label="expand button" onClick={() => setIsPeopleCardsCollapsed(!isPeopleCardsCollapsed)}>
               <IconExpand className="people-panel__header-buttons-expand-svg" />
             </IconButton>
           ) : (
-            <IconButton onClick={() => setIsPeopleCardsCollapsed(!isPeopleCardsCollapsed)}>
+            <IconButton aria-label="collapse button" onClick={() => setIsPeopleCardsCollapsed(!isPeopleCardsCollapsed)}>
               <IconCollapse className="people-panel__header-buttons-collapse-svg" />
             </IconButton>
           )}
@@ -173,7 +173,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
   )
 
   const content = (
-    <Group>
+    <Group className="people-panel__content">
       {scrolledPersons && scrolledPersons.length > 0 && (
         <InfiniteScroll
           dataLength={scrolledPersons.length}
@@ -183,7 +183,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
         >
           {scrolledPersons.map((person, index) => (
             <PersonCard
-              key={index}
+              key={`${index} ${person.vk_id}`}
               person={person}
               isCurPerson={person === curPerson}
               scoringMeta={format!.meta}
@@ -208,7 +208,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
       {panelHeader}
       <Spacing size={100} />
       {(format && format.enable) || fetchedUser?.isAppModerator ? content : updating}
-      <Spacing size={30} />
+      <Spacing size={60} />
       {panelFooter}
     </Panel>
   )

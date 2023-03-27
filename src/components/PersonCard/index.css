@@ -11,10 +11,15 @@
     height: 100%;
   } */
 
-.person-card__header {
-  align-items: center;
+.person-card__header-container {
   display: flex;
   justify-content: flex-start;
+}
+
+.person-card__header {
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
 }
 
 .person-card__header-title {
@@ -26,6 +31,26 @@
 .person-card__header-title-star {
   font-size: 10px;
   padding-left: 4px;
+}
+
+.person-card__header-title-badge {
+  margin-left: 4px;
+  margin-top: 4px;
+}
+
+.person-card__header-subtitle {
+  color: var(--vkui--color_text_subhead);
+  /* font-family: var(--vkui--font_title3--font_family--regular);
+  font-size: var(--vkui--font_title3--font_size--regular);
+  font-weight: var(--vkui--font_title3--font_weight--regular);
+  line-height: var(--vkui--font_title3--line_height--regular); */
+}
+
+.person-card__header-medals {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
 }
 
 .person-card__content-buttons {
@@ -45,40 +70,6 @@
   margin-top: 8px;
 }
 
-.person-card__header-inactive-year {
-  font-size: 8px;
-  margin-left: 4px;
-  vertical-align: super;
-  color: var(--vkui--color_icon_negative);
-}
-
-.person-card__header-inactive-badge {
-  margin-left: 4px;
-  margin-top: 4px;
-}
-
-.person-card__header-subheader-scoring {
-  color: var(--vkui--color_text_subhead);
-  /* font-family: var(--vkui--font_title3--font_family--regular);
-  font-size: var(--vkui--font_title3--font_size--regular);
-  font-weight: var(--vkui--font_title3--font_weight--regular);
-  line-height: var(--vkui--font_title3--line_height--regular); */
-}
-
-.person-card__header-subheader-medals {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 4px;
-}
-
-.person-card__header-subheader {
-  padding-top: 4px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
 .person-card__content-info {
   padding-left: 12px;
 }
@@ -90,9 +81,24 @@
 
 .person-card__header-photo {
   margin-right: 14px;
+  margin-top: 4px;
 }
 
-.person-card__header-collapse-button,
-.person-card__header-expand-button {
+.person-card__header-button-collapse,
+.person-card__header-button-expand {
   margin-left: auto;
+}
+
+.person-card__content-medals-medal {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
+.person-card__content-medals-medal-title{
+  padding-left: 4px;
+}
+
+.person-card__content-medals-medal-subtitle{
+  color: var(--vkui--color_text_subhead);
 }

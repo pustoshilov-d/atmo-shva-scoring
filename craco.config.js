@@ -6,6 +6,9 @@ dotenvCra.config()
 
 module.exports = {
   webpack: {
+    loaders: [
+      { test: /\.json$/, loader: 'json-loader' },
+    ],
     alias: {
       '@assets': path.resolve(__dirname, './src/assets/'),
       '@components': path.resolve(__dirname, './src/components/'),

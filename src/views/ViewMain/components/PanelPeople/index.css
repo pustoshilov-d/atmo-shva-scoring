@@ -26,6 +26,9 @@
   padding: 9px;
 }
 
+.people-panel__content {
+  background: var(--vkui--color_background_content);
+}
 .people-panel__updating-content {
   display: flex;
   position: fixed;

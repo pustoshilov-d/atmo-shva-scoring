@@ -18,6 +18,7 @@ import { ExtededUserInfo, iConfig, iPerson, iScoringInfo } from './shared/types'
 import { ViewBlock } from './views/ViewBlock'
 import { ViewLoader } from './views/ViewLoader'
 import { ViewMain } from './views/ViewMain'
+import { ViewModerator } from './views/ViewModerator'
 
 const App: FC = () => {
   const [appearance, setAppearance] = useState<AppearanceType>('dark')
@@ -28,13 +29,12 @@ const App: FC = () => {
   const [config, setConfig] = useState<iConfig>()
   const [curPerson, setCurPerson] = useState<iPerson>()
 
-  const { sizeX } = useAdaptivityConditionalRender()
+  // const { sizeX } = useAdaptivityConditionalRender()
 
   useEffect(() => {
     bridge.subscribe((res) => {
       if (res.detail.type === 'VKWebAppUpdateConfig') {
-        // TODO: where stand scheme
-        // setAppearance(res.detail.data.scheme)
+        setAppearance(res.detail.data.appearance)
       }
     })
 
@@ -63,7 +63,7 @@ const App: FC = () => {
         const isAtmoMember = await checkIsAtmoMember(fetchedUserToSet.id)
         const isAppModerator = configToSet?.moderators.includes(fetchedUserToSet.id) || false
         fetchedUserToSet = { ...fetchedUserToSet, isShvaParticipant, isAtmoMember, isAppModerator }
-        // console.log(fetchedUserToSet)
+        console.log(fetchedUserToSet)
 
         if (!scoringInfoToSet || !(isAtmoMember || isShvaParticipant)) {
           console.log(new Date().toTimeString(), 'Access denied 2')
@@ -78,8 +78,15 @@ const App: FC = () => {
         setFetchedUser(fetchedUserToSet)
         setCurPerson(curPersonToSet)
         setScoringInfo(scoringInfoToSet)
-        setActiveView(eViewIds.Main)
+
         console.log(new Date().toTimeString(), 'App.fetchData hook processed')
+        // if (fetchedUserToSet.isAppModerator) {
+        //   console.log('Mode moderator')
+        //   setActiveView(eViewIds.Moderator)
+        // } else {
+        console.log('Mode user')
+        setActiveView(eViewIds.Main)
+    
       } catch (error) {
         console.log(new Date().toTimeString(), 'App.fetchData hook error', error)
         setActiveView(eViewIds.NotLoaded)
@@ -99,6 +106,12 @@ const App: FC = () => {
                 <ViewBlock id={eViewIds.Block} />
                 <ViewNotLoaded id={eViewIds.NotLoaded} />
                 <ViewLoader id={eViewIds.Loader} />
+                <ViewModerator
+                  setActiveView={setActiveView}
+                  id={eViewIds.Moderator}
+                  fetchedUser={fetchedUser}
+                  scoringInfo={scoringInfo!}
+                />
                 <ViewMain
                   id={eViewIds.Main}
                   fetchedUser={fetchedUser}

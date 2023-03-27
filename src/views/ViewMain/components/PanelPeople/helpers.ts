@@ -9,18 +9,18 @@ export const searchPersons = (p: { persons: iPerson[]; value: string }): iPerson
     // TODO: only for eng?
     p.value = ru.fromEn(p.value)
     p.value = p.value.toUpperCase()
-    p.value = p.value.replace('Ё', 'Е')
+    p.value = p.value.replaceAll('Ё', 'Е')
     localPersons = localPersons.filter(
       (person) =>
         p.value === '' ||
         (person.name &&
           person.surname &&
-          `${person.name} ${person.surname}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
+          `${person.name} ${person.surname}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
         (person.name &&
           person.surname &&
-          `${person.surname} ${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
-        (person.name && !person.surname && `${person.name}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
-        (!person.name && person.surname && `${person.surname}`.toUpperCase().replace('Ё', 'Е').includes(p.value)) ||
+          `${person.surname} ${person.name}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
+        (person.name && !person.surname && `${person.name}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
+        (!person.name && person.surname && `${person.surname}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
         (person.badge && `${person.badge}`.includes(p.value))
     )
   }

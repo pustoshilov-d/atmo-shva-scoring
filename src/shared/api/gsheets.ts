@@ -8,7 +8,7 @@ import apiService from './ApiService'
 import { getPhotoUrls } from './vkbridge'
 
 export const getGsheetsData = async (): Promise<[iPerson[], iScoringInfo, iConfig]> => {
-  const gheetsAPI = REACT_APP_GSHEETS_API_URL || ""
+  const gheetsAPI = REACT_APP_GSHEETS_API_URL || ''
 
   console.log(new Date().toTimeString(), 'getGsheetsData sent')
   const gsheetsData = await apiService.get<iGsheetsResDTO>(gheetsAPI)
@@ -26,25 +26,26 @@ export const getGsheetsData = async (): Promise<[iPerson[], iScoringInfo, iConfi
   offlineToSet = { ...offlineToSet, persons: offlineToSet.persons }
 
   personsToSet = offlineToSet.persons.concat(onlineToSet.persons)
-  return [personsToSet, { online: onlineToSet, offline: offlineToSet, medalsMeta}, config]
+  return [personsToSet, { online: onlineToSet, offline: offlineToSet, medalsMeta }, config]
 }
 
 const suitePersons = (persons: iPersonDTO[]): iPerson[] => {
   // let personsToSet = persons.map((item) => (_updateBoolean(item)))
   // console.log({ persons })
-  let personsToSet: iPerson[] = persons.map((item) => {
-    // console.log(item.medals)
-    return {
-      ...item,
-      'medals': item.medals
-        ? item.medals
+  let personsToSet: iPerson[] = persons.map((p) => {
+    const pToSet = {
+      ...p,
+      'medals': p.medals
+        ? p.medals
             .toString()
-            .replace('\n', ',')
+            .replaceAll('\r', '')
+            .replaceAll('\n', ',')
             .split(',')
             .map((m) => m.trim())
         : [],
-      'sex': item.sex || 'М',
+      'sex': p.sex || 'М',
     }
+    return pToSet
   })
 
   return personsToSet

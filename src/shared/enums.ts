@@ -12,6 +12,7 @@ export enum eViewIds {
   NotLoaded = 'notloaded',
   Loader = 'loader',
   Main = 'main',
+  Moderator = 'moderator',
 }
 
 export enum ePanelIds {
@@ -19,6 +20,7 @@ export enum ePanelIds {
   Block = 'block',
   NotLoaded = 'notloaded',
   Loader = 'loader',
+  Moderator = 'moderator',
 }
 
 export enum eTabbarItemIds {

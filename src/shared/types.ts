@@ -4,7 +4,7 @@ import { eTabbarItemIds } from './enums'
 export interface iGsheetsResDTO {
   online: iFormatDTO
   offline: iFormatDTO
-  medalsMeta: iMedalsMeta
+  medalsMeta: iMedalMeta[]
   persons: iPersonDTO[]
   config: iConfig
 }
@@ -18,14 +18,11 @@ export interface iConfig {
 export interface iScoringInfo {
   online: iFormat
   offline: iFormat
-  medalsMeta: iMedalsMeta
+  medalsMeta: iMedalMeta[]
 }
 
-export interface iMedalsMeta {
-  [key: string]: iMedalsMetaKey
-}
-
-export interface iMedalsMetaKey {
+export interface iMedalMeta {
+  key: string
   title_male: string
   title_female: string
   descr?: string
@@ -79,7 +76,7 @@ export interface iPerson {
   vk_id?: number
   name?: string
   surname?: string
-  medals?: string[]
+  medals: string[]
   badge?: number | string
   team?: number
   message?: string

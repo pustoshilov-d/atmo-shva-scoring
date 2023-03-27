@@ -11,8 +11,9 @@ export interface iNonAuthViewsProps extends iCustomViewProps {
   setActiveView?: (view: eViewIds) => void
 }
 
-export interface iModeratorViewProps extends iNonAuthViewsProps {
-  
+export interface iModeratorViewProps extends iCustomViewProps {
+  scoringInfo: iScoringInfo
+  setActiveView: (view: eViewIds) => void
 }
 
 

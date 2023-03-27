@@ -1,18 +1,19 @@
-import { iMedalsMeta, iPerson, iScoringMeta } from '@src/shared/types'
+import { iMedalMeta, iPerson, iScoringMeta } from '@src/shared/types'
 import { Icon24ChevronDown, Icon24ChevronUp, Icon24LogoVkColor } from '@vkontakte/icons'
 import { Avatar, Badge, Counter, IconButton, InfoRow, SimpleCell, Subhead, Title } from '@vkontakte/vkui'
-import { FC, useEffect, useState } from 'react'
+import { FC, ReactElement, useEffect, useState } from 'react'
 import { getMedals } from '../Medals'
 import './index.css'
 
-const medalsImages = getMedals(18, '0')
+const medalsImagesRow = getMedals(18, '0')
+const medalsImagesHistory = getMedals(20, '0')
 
 export interface iPersonCardProps {
   person: iPerson
   isCardsCollapsed: boolean
   isCurPerson: boolean
   scoringMeta: iScoringMeta
-  medalsMeta: iMedalsMeta
+  medalsMeta: iMedalMeta[]
 }
 
 export const PersonCard: FC<iPersonCardProps> = ({
@@ -23,27 +24,76 @@ export const PersonCard: FC<iPersonCardProps> = ({
   medalsMeta,
 }) => {
   const [isCardCollapsed, setIsCardCollapsed] = useState<boolean>(isCardsCollapsed)
-
   useEffect(() => {
     setIsCardCollapsed(isCardsCollapsed)
   }, [isCardsCollapsed])
 
-  const subheaderTitles = []
-  if (person.badge) {
-    subheaderTitles.push(`${person.badge} бейдж`)
-  }
-  if (person.team) {
-    subheaderTitles.push(`${person.team} команда`)
-  }
-  if (person.sum || person.sum === 0) {
-    let floor = Math.floor(person.sum) % 10
-    let title = floor === 1 ? 'балл' : floor > 1 && floor < 5 ? 'балла' : 'баллов'
-    subheaderTitles.push(`${person.sum} ${title}`)
+  const pMedalsMeta = medalsMeta.filter(
+    (medalMeta) => person.medals.includes(medalMeta.key) && medalsImagesRow[medalMeta.key] && !medalMeta.disable
+  )
+  const getHeaderSubtitles = (): ReactElement | undefined => {
+    const headerSubtitles = []
+    if (person.badge) {
+      headerSubtitles.push(`${person.badge} бейдж`)
+    }
+    if (person.team) {
+      headerSubtitles.push(`${person.team} команда`)
+    }
+    if (person.sum || person.sum === 0) {
+      let floor = Math.floor(person.sum) % 10
+      let title = floor === 1 ? 'балл' : floor > 1 && floor < 5 ? 'балла' : 'баллов'
+      headerSubtitles.push(`${person.sum} ${title}`)
+    }
+    if (headerSubtitles.length) {
+      return <Subhead className="person-card__header-subtitle">{headerSubtitles.join(' • ')}</Subhead>
+    }
   }
   // console.log({ person })
 
+  const medalsRow = (
+    <>
+      {person.medals && person.medals.length > 0 && (
+        <div className="person-card__header-medals">
+          {pMedalsMeta.map((medalMeta) => (
+            <>{medalsImagesRow[medalMeta.key]}</>
+          ))}
+        </div>
+      )}
+    </>
+  )
+
+  const medalsHistory = (
+    <>
+      {person.medals && person.medals.length > 0 && (
+        <>
+          <InfoRow header={''}>
+            <b>Достижения:</b>
+          </InfoRow>
+          <div className="person-card__content-medals-list">
+            {pMedalsMeta.map((medalMeta) => {
+              const medalKey = medalMeta.key
+              const { title_female, title_male, descr } = medalMeta
+              const title = person.sex === 'Ж' ? title_female : title_male
+              const image = medalsImagesHistory[medalKey]
+              return (
+                <div className="person-card__content-medals-medal" key={medalKey}>
+                  <>
+                    {image}
+                    <span className="person-card__content-medals-medal-title">
+                      {title} <span className="person-card__content-medals-medal-subtitle">{descr}</span>
+                    </span>
+                  </>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+    </>
+  )
+
   const cardHeader = (
-    <div className="person-card__header">
+    <div className="person-card__header-container">
       <Avatar className="person-card__header-photo" size={48} src={person.photo}>
         {person.sum && person.sum !== 0 && (
           <Avatar.Badge background="stroke">
@@ -53,32 +103,21 @@ export const PersonCard: FC<iPersonCardProps> = ({
           </Avatar.Badge>
         )}
       </Avatar>
-      <div className="person-card__header-container">
+      <div className="person-card__header">
         <div className="person-card__header-title">
           <Title level="3">{`${person.name ? person.name + ' ' : ''}${person.surname ? person.surname : ''}`}</Title>
           {isCurPerson && <Subhead className="person-card__header-title-star">⭐</Subhead>}
           {person.excluded && (
-            <Badge className="person-card__header-inactive-badge" mode="prominent" aria-label="Исключён" />
+            <Badge className="person-card__header-title-badge" mode="prominent" aria-label="Исключён" />
           )}
         </div>
-        <div className="person-card__header-subheader">
-          <div className="person-card__header-subheader-medals">
-            {subheaderTitles.length > 0 && (
-              <Subhead className="person-card__header-subheader-scoring">{subheaderTitles.join(', ')}</Subhead>
-            )}
-            {/* {person.medals &&
-              person.medals.map((i) => (
-                <div key={i}>
-                  <>{medalsHeader[i as keyof typeof medalsHeader]}</>
-                </div>
-              ))} */}
-          </div>
-        </div>
+        {getHeaderSubtitles()}
+        {isCardCollapsed && medalsRow}
       </div>
       {isCardCollapsed ? (
-        <Icon24ChevronDown className="person-card__header-expand-button" />
+        <Icon24ChevronDown className="person-card__header-button-expand" />
       ) : (
-        <Icon24ChevronUp className="person-card__header-collapse-button" />
+        <Icon24ChevronUp className="person-card__header-button-collapse" />
       )}
     </div>
   )
@@ -88,32 +127,13 @@ export const PersonCard: FC<iPersonCardProps> = ({
     e.nativeEvent.stopImmediatePropagation()
   }
 
-  // const medalsExpand = (
-  //   <>
-  //     <InfoRow header="Достижения:">
-  //     <div className="person-card__content-medals-list">
-  //       {person.medals && person.medals.length > 0 && person.medals.map(medal => {
-  //         if (!medalsMeta[medal] || !medalsHeader[medal]) {return}
-  //         const {title_female, title_male, disable, descr } = medalsMeta[medal]
-  //         const title = person.sex ==="Ж" ? title_female : title_male
-  //         if (disable) { return }
-  //         const image = medalsImages[medal]
-  //         return (
-  //           <>
-  //             {image}
-  //             <span style={{ paddingLeft: '4px' }}>{title} {descr}</span>
-  //           </>
-  //       )})}
-  //     </div>
-  //   </>
-  // )
-
   const contentInfoKeys = Object.getOwnPropertyNames(person).filter((k) => scoringMeta[k] && scoringMeta[k].is_dynamic)
   // console.log({ contentInfoKeys })
   const contentInfo = (
     <>
+      {medalsHistory}
       {contentInfoKeys
-        .filter((key) => person[key] && scoringMeta[key].title_ru)
+        .filter((key) => (person[key] || person[key] === 0) && scoringMeta[key].title_ru)
         .map((key) => {
           const value = person[key]
           const title_ru = scoringMeta[key].title_ru
@@ -155,6 +175,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
       <div className="person-card__content-buttons">
         {person.vk_id && (
           <IconButton
+            aria-label="vk link"
             onClick={(e) => handleClick(e)}
             href={`https://vk.com/id${person.vk_id}`}
             target="_blank"
