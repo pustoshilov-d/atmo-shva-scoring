@@ -17,7 +17,7 @@ export const getGsheetsData = async (): Promise<[iPerson[], iScoringInfo, iConfi
 
   const { online, offline, medalsMeta, persons, config } = gsheetsData
   let personsToSet = suitePersons(persons)
-  personsToSet = sortPersons({ persons: personsToSet, ...ePeopleSort.SUM })
+  // personsToSet = sortPersons({ persons: personsToSet, ...ePeopleSort.SUM })
   personsToSet = await updatePhotos(personsToSet)
 
   let onlineToSet = { ...online, persons: personsToSet.filter((p) => p.format === eTabbarItemIds.Online) }

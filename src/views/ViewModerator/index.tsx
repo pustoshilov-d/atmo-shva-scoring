@@ -2,11 +2,12 @@ import { getGroupToken } from '@src/shared/api/vkbridge'
 import { ePanelIds, eViewIds } from '@src/shared/enums'
 import { iModeratorViewProps } from '@views/types'
 import bridge from '@vkontakte/vk-bridge'
-import { Button, Panel, PanelHeader, PanelHeaderBack, View } from '@vkontakte/vkui'
+import { Button, ButtonGroup, Div, Image, Panel, PanelHeader, PanelHeaderBack, Title, View } from '@vkontakte/vkui'
 import { FC, useEffect, useState } from 'react'
 import { REACT_APP_VK_SHVA_GROUP_ID, REACT_APP_VK_SHVA_ONLINE_GROUP_ID } from '../../shared/consts'
 import './index.css'
-import tableWidget from '@src/assets/data/tableWidget.json'
+import { getAppWidgetCode, getDynamicAppWidgetCode } from './helpers'
+import { iPerson } from '@src/shared/types'
 
 export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, scoringInfo, fetchedUser, ...rest }) => {
   const [isShvaButtonLoading, setIsShvaButtonLoading] = useState<boolean>(false)
@@ -20,53 +21,103 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, scoringI
     console.log(new Date().toTimeString(), 'ViewModerator hook ended')
   }, [])
 
-  const updateShvaWidget = async () => {
-    setIsShvaButtonLoading(true)
-    const shvaToken = await getGroupToken(REACT_APP_VK_SHVA_GROUP_ID)
+  const updateAppWidget = async (group: 'offline' | 'online' = 'offline', mode: 'set' | 'del' = 'set') => {
+    let groupId: number
+    let loadingButtonFun: (flag: boolean) => void
+    let persons: iPerson[]
+    switch (group) {
+      case 'offline':
+        groupId = REACT_APP_VK_SHVA_GROUP_ID
+        loadingButtonFun = setIsShvaButtonLoading
+        persons = scoringInfo.offline.persons
+        break
+      case 'online':
+        groupId = REACT_APP_VK_SHVA_ONLINE_GROUP_ID
+        loadingButtonFun = setIisShvaOnlineButtonLoading
+        persons = scoringInfo.online.persons
+        break
+    }
+    loadingButtonFun(true)
+
+    let code: string
+    let type: string
+    switch (mode) {
+      case 'set':
+        // [type, code] = getAppWidgetCode(group, persons)
+        [type, code] = getDynamicAppWidgetCode(group, persons)
+        break
+      case 'del':
+        type = "table"
+        code = "return false;"
+        break
+    }
+
+    const groupToken = await getGroupToken(groupId)
     const res = await bridge.send('VKWebAppCallAPIMethod', {
       method: 'appWidgets.update',
       params: {
-        type: 'table',
-        code: JSON.stringify(tableWidget),
+        type: type,
+        code: code,
         v: '5.131',
-        access_token: shvaToken,
+        access_token: groupToken,
       },
     })
-    // console.log({ res })
-    setIsShvaButtonLoading(false)
+    console.log({ res })
+    loadingButtonFun(false)
   }
 
-  const updateShvaOnlineWidget = async () => {
-    setIisShvaOnlineButtonLoading(true)
-    const shvaOnlineToken = await getGroupToken(REACT_APP_VK_SHVA_ONLINE_GROUP_ID)
-    setIisShvaOnlineButtonLoading(false)
-  }
   return (
     <View activePanel={eViewIds.Moderator} {...rest}>
       <Panel id={ePanelIds.Moderator}>
         <PanelHeader separator={false} before={<PanelHeaderBack onClick={() => setActiveView(eViewIds.Main)} />}>
-          Для модераторов
+          Для админов
         </PanelHeader>
-        <Button
-          onClick={updateShvaWidget}
-          align="center"
-          appearance="positive"
-          // stretched={true}
-          mode="primary"
-          loading={isShvaButtonLoading}
-        >
-          Установить виджет в группу ШВА
-        </Button>
-        <Button
-          onClick={updateShvaOnlineWidget}
-          align="center"
-          appearance="positive"
-          // stretched={true}
-          mode="primary"
-          loading={isShvaOnlineButtonLoading}
-        >
-          Установить виджет в группу онлайн ШВА
-        </Button>
+        <Div>
+          <Title level="3">Оффлайн</Title>
+          <ButtonGroup mode="horizontal" gap="m">
+            <Button
+              onClick={() => updateAppWidget('offline', 'set')}
+              appearance="positive"
+              // stretched={true}
+              mode="primary"
+              loading={isShvaButtonLoading}
+              disabled={!scoringInfo.offline.enable}
+            >
+              Обновить виджет
+            </Button>
+            <Button
+              onClick={() => updateAppWidget('offline', 'del')}
+              appearance="neutral"
+              mode="primary"
+              loading={isShvaButtonLoading}
+            >
+              Удалить виджет
+            </Button>
+          </ButtonGroup>
+        </Div>
+        <Div>
+          <Title level="3">Онлайн</Title>
+          <ButtonGroup mode="horizontal" gap="m">
+            <Button
+              onClick={() => updateAppWidget('online', 'set')}
+              appearance="positive"
+              mode="primary"
+              loading={isShvaOnlineButtonLoading}
+              disabled={!scoringInfo.online.enable}
+            >
+              Обновить виджет
+            </Button>
+            <Button
+              onClick={() => updateAppWidget('online', 'del')}
+              appearance="neutral"
+              mode="primary"
+              loading={isShvaOnlineButtonLoading }
+            >
+              Удалить виджет
+            </Button>
+          </ButtonGroup>
+        </Div>
+        {/* <Image src="https://www.svgrepo.com/show/407661/two-hearts.svg" size={28}/> */}
       </Panel>
     </View>
   )

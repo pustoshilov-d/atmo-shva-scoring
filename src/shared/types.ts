@@ -12,6 +12,7 @@ export interface iGsheetsResDTO {
 export interface iConfig {
   shva_group_id: number
   moderators: number[]
+  admins: number[]
   [key: string]: string[] | string | number | number[] | boolean
 }
 
@@ -64,7 +65,7 @@ export interface iPersonDTO {
   team?: number
   message?: string
   format: eTabbarItemIds
-  place: number
+  place?: number
   sum: number
   excluded: boolean
   [key: string]: string | number | boolean | undefined
@@ -81,7 +82,7 @@ export interface iPerson {
   team?: number
   message?: string
   format: eTabbarItemIds
-  place: number
+  place?: number
   sum: number
   excluded: boolean
   [key: string]: string | number | boolean | string[] | number[] | undefined

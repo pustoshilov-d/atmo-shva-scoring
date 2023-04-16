@@ -63,15 +63,16 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     }
     // console.log(persons.length, { tabbarItemId })
     let localShownPersons = persons
-    if (peopleSort) {
-      localShownPersons = sortPersons({ persons: localShownPersons, ...peopleSort })
-    }
+    // if (peopleSort) {
+    //   localShownPersons = sortPersons({ persons: localShownPersons, ...peopleSort })
+    // }
     if (peopleSearch !== '') {
       localShownPersons = searchPersons({ persons: localShownPersons, value: peopleSearch })
     }
     resetShownPersons(localShownPersons)
     console.log(new Date().toTimeString(), 'peopleSort, peopleSearch hook ended')
-  }, [peopleSort, peopleSearch, persons])
+  // }, [peopleSort, peopleSearch, persons])
+  }, [peopleSearch, persons])
 
   const resetShownPersons = (localShownPersons = persons): void => {
     localShownPersons = shiftCurPerson({ persons: localShownPersons, curPerson: curPerson })

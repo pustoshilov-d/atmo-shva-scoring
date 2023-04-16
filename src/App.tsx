@@ -45,6 +45,7 @@ const App: FC = () => {
           ...(await bridge.send('VKWebAppGetUserInfo')),
           isAtmoMember: false,
           isAppModerator: false,
+          isAppAdmin: false,
           isShvaParticipant: false,
         }
 
@@ -62,7 +63,8 @@ const App: FC = () => {
         const isShvaParticipant = persons.map((p) => p.vk_id).includes(fetchedUserToSet.id)
         const isAtmoMember = await checkIsAtmoMember(fetchedUserToSet.id)
         const isAppModerator = configToSet?.moderators.includes(fetchedUserToSet.id) || false
-        fetchedUserToSet = { ...fetchedUserToSet, isShvaParticipant, isAtmoMember, isAppModerator }
+        const isAppAdmin = configToSet?.admins.includes(fetchedUserToSet.id) || false
+        fetchedUserToSet = { ...fetchedUserToSet, isShvaParticipant, isAtmoMember, isAppModerator, isAppAdmin }
         console.log(fetchedUserToSet)
 
         if (!scoringInfoToSet || !(isAtmoMember || isShvaParticipant)) {
@@ -80,12 +82,13 @@ const App: FC = () => {
         setScoringInfo(scoringInfoToSet)
 
         console.log(new Date().toTimeString(), 'App.fetchData hook processed')
-        // if (fetchedUserToSet.isAppModerator) {
-        //   console.log('Mode moderator')
-        //   setActiveView(eViewIds.Moderator)
-        // } else {
-        console.log('Mode user')
-        setActiveView(eViewIds.Main)
+        if (fetchedUserToSet.isAppAdmin) {
+          console.log('Mode admin')
+          setActiveView(eViewIds.Moderator)
+        } else {
+          console.log('Mode user')
+          setActiveView(eViewIds.Main)
+        }
     
       } catch (error) {
         console.log(new Date().toTimeString(), 'App.fetchData hook error', error)

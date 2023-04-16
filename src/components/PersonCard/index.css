@@ -89,16 +89,24 @@
   margin-left: auto;
 }
 
+.person-card__content-excluded {
+  display: flex;
+}
+
+.person-card__content-excluded .vkuiInfoRow {
+  margin-top: 0 !important;
+}
+
 .person-card__content-medals-medal {
   display: flex;
   align-items: center;
   font-size: 12px;
 }
 
-.person-card__content-medals-medal-title{
+.person-card__content-medals-medal-title {
   padding-left: 4px;
 }
 
-.person-card__content-medals-medal-subtitle{
+.person-card__content-medals-medal-subtitle {
   color: var(--vkui--color_text_subhead);
 }

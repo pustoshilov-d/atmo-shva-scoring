@@ -95,9 +95,9 @@ export const PersonCard: FC<iPersonCardProps> = ({
   const cardHeader = (
     <div className="person-card__header-container">
       <Avatar className="person-card__header-photo" size={48} src={person.photo}>
-        {person.sum && person.sum !== 0 && (
+        {person.place && (
           <Avatar.Badge background="stroke">
-            <Counter size="s" mode={person.place <= 10 ? 'primary' : 'secondary'}>
+            <Counter size="s" mode="primary">
               {person.place}
             </Counter>
           </Avatar.Badge>
@@ -131,6 +131,14 @@ export const PersonCard: FC<iPersonCardProps> = ({
   // console.log({ contentInfoKeys })
   const contentInfo = (
     <>
+      {person.excluded && (
+        <div className="person-card__content-excluded">
+          <InfoRow header={''}>
+            <b>{person.sex === 'Ж' ? 'Исключена' : 'Исключён'}</b>
+          </InfoRow>
+          <Badge className="person-card__header-title-badge" mode="prominent" aria-label="Исключён" />
+        </div>
+      )}
       {medalsHistory}
       {contentInfoKeys
         .filter((key) => (person[key] || person[key] === 0) && scoringMeta[key].title_ru)

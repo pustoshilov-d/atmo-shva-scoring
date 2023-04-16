@@ -9,6 +9,9 @@ import { ReactComponent as Owl } from '@assets/img/medals/owl.svg'
 import { ReactComponent as Medal } from '@assets/img/medals/first-medal.svg'
 import { ReactComponent as Life } from '@assets/img/medals/life.svg'
 import { ReactComponent as Cat } from '@assets/img/medals/cat.svg'
+import { ReactComponent as Theater } from '@assets/img/medals/theater.svg'
+import { ReactComponent as Сupcake } from '@assets/img/medals/cupcake.svg'
+import { ReactComponent as Hearts } from '@assets/img/medals/hearts.svg'
 
 import './index.css'
 
@@ -27,5 +30,10 @@ export const getMedals = (size = 16, padding = '3'): Record<string, React.SVGPro
     'top_sum_image': <Image className="medals__medal" style={style} />,
     'top_sum_activity': <Flash className="medals__medal" style={style} />,
     'top_sum_tests': <Owl className="medals__medal" style={style} />,
+    'scene_winner_one': <Theater className="medals__medal" style={style} />,
+    'scene_winner_two': <Theater className="medals__medal" style={style} />,
+    'scene_winner_three': <Theater className="medals__medal" style={style} />,
+    'yarm_winner': <Сupcake className="medals__medal" style={style} />,
+    'chat_tasks': <Hearts className="medals__medal" style={style} />,
   }
 }

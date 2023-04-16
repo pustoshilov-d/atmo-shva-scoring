@@ -1,6 +1,6 @@
 {
-  "name": "atmo-staff",
-  "version": "3.0.0b",
+  "name": "atmo-shva-scoring",
+  "version": "2.0.0",
   "private": true,
   "homepage": ".",
   "dependencies": {
